@@ -187,7 +187,6 @@ else:
 
 only_anomalies = st.checkbox("Показывать только аномальные точки", value=False)
 
-
 fig = go.Figure()
 
 if not only_anomalies:
@@ -218,7 +217,7 @@ fig.update_layout(
     legend=dict(
         orientation="h",
         yanchor="bottom",
-        y=1.02,
+        y=1,
         xanchor="center",
         x=0.5
     )
@@ -245,3 +244,16 @@ city_season_stats = season_stats[season_stats["city"] == selected_city]
 
 st.subheader("Сезонный профиль температуры")
 st.dataframe(city_season_stats)
+
+
+st.markdown(
+    """
+    <div style="text-align: center; color: gray; font-size: 0.9em;">
+        Эксперимент с распараллеливанием анализа:
+        <a href="https://github.com/GrigoriiIurev/HSE_Applied_Python/blob/main/Project%201%20Streamlit/Project_1_test.ipynb" target="_blank">
+            ссылка на ноутбук
+        </a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
