@@ -4,6 +4,7 @@ from aiogram.filters import Command
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from storage.memory import create_user, users
+from services.calculations import calculate_calories
 
 class ProfileStates(StatesGroup):
     weight = State()
@@ -117,7 +118,11 @@ def profile_handler(dp: Dispatcher):
 
         user_id = message.from_user.id
 
-        users[user_id] = create_user(data)
+        calorie_goal = calculate_calories(data)
+
+        user = create_user(data)
+        user["calorie_goal"] = calorie_goal
+        users[user_id] = user
 
         await state.clear()
         await message.reply("Профиль сохранён")
