@@ -1,0 +1,18 @@
+# конфиги и секреты
+config.py
+.env
+
+# python
+__pycache__/
+*.pyc
+
+# виртуальное окружение
+venv/
+.env/
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
