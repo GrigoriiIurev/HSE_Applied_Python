@@ -12,6 +12,8 @@ from handlers.progress import check_progress_handler
 
 
 async def main():
+    if MY_BOT_TOKEN is None:
+        raise RuntimeError("MY_BOT_TOKEN is not set")
     bot = Bot(token=MY_BOT_TOKEN)
     dp = Dispatcher()
 
