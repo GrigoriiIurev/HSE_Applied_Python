@@ -43,4 +43,4 @@ def check_progress_handler(dp: Dispatcher):
             f"- Баланс: {balance} ккал."
         )
 
-        await message.reply(response)
+        await message.answer(response)

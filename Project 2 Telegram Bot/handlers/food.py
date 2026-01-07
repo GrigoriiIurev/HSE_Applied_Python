@@ -9,6 +9,7 @@ from storage.memory import users, user_exists
 from services.food_api import get_calories
 
 class FoodStates(StatesGroup):
+    waiting_for_product = State()
     waiting_for_grams = State()
 
 def log_food_handler(dp: Dispatcher):
@@ -31,7 +32,8 @@ def log_food_handler(dp: Dispatcher):
         product_name = message.text.replace("/log_food", "").strip()
 
         if product_name == "":
-            await message.reply("Укажите название продукта")
+            await message.answer("Укажите название продукта")
+            await state.set_state(FoodStates.waiting_for_product)
             return
         
         name, kcal, error = await get_calories(product_name)
@@ -45,7 +47,37 @@ def log_food_handler(dp: Dispatcher):
             return
         
         await state.update_data(kcal=kcal, product_name=name)
-        await message.reply(f"{name} — {kcal} ккал на 100 г. Сколько грамм вы съели?")
+        await message.answer(f"{name} — {kcal} ккал на 100 г. Сколько грамм вы съели?")
+        await state.set_state(FoodStates.waiting_for_grams)
+
+    @dp.message(FoodStates.waiting_for_product)
+    async def get_product_name(message: Message, state: FSMContext):
+        if message.from_user is None:
+            await message.answer("Пользователь не определен")
+            return
+        
+        if message.text is None:
+            await message.answer("Введите название продукта текстом")
+            return
+
+        product_name = message.text.strip()
+
+        if not product_name:
+            await message.answer("Введите название продукта")
+            return
+
+        name, kcal, error = await get_calories(product_name)
+
+        if error == "network":
+            await message.answer("Проблемы с подключением к OpenFoodFacts")
+            return
+
+        if error == "not_found":
+            await message.answer("Продукт не найден")
+            return
+
+        await state.update_data(kcal=kcal, product_name=name)
+        await message.answer(f"{name} — {kcal} ккал на 100 г. Сколько грамм вы съели?")
         await state.set_state(FoodStates.waiting_for_grams)
 
     @dp.message(FoodStates.waiting_for_grams)
@@ -85,5 +117,5 @@ def log_food_handler(dp: Dispatcher):
         users[user_id]["logged_calories"] += total_kcal
 
         left_to_eat = users[user_id]["calorie_goal"] - users[user_id]["logged_calories"] + users[user_id]["burned_calories"]
-        await message.reply(f"Осталось съесть {left_to_eat} ккал")
+        await message.answer(f"Осталось съесть {left_to_eat} ккал")
         await state.clear()
