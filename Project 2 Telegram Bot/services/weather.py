@@ -1,11 +1,14 @@
 import httpx
 
 async def current_temperature(location: str) -> tuple[float | None, str | None]:
-    from config import MY_WEATHER_TOKEN
+    # from config import MY_WEATHER_TOKEN
+    import os
+
+    OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
     url = "https://api.openweathermap.org/data/2.5/weather"
     params = {
         "q": location,
-        "appid": MY_WEATHER_TOKEN,
+        "appid": OPENWEATHER_API_KEY,
         "units": "metric"
     }
 
