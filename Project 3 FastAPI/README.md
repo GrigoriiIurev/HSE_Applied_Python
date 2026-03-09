@@ -264,12 +264,12 @@ POST /links/shorten
 Ответ:
 ```
 {
-  "short_code": "myalias"
+  "short_code": "n37pYv"
 }
 ```
 Переход по ссылке в браузере:
 
-http://localhost:8000/links/myalias
+https://hse-applied-python-lwqr.onrender.com/links/n37pYv
 
 ---
 # Тестирование
