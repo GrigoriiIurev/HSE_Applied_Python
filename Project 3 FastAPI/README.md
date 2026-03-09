@@ -301,19 +301,80 @@ http://localhost:8000/links/myalias
 
 ## Запуск тестов
 
-Для запуска тестов используется **pytest**.
+Был реализован подход тестирования кода в папке `test`, но он в данный момент не работает, так как пришлось переделать код для деплоя на Render. Для запуска теста необходимо:
 
-Установите необходимые зависимости:
+Поменять комметирование в файле database.py
 ```
-pip install pytest pytest-asyncio httpx
+DATABASE_URL = (
+    f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+)
+
+# DATABASE_URL = os.getenv("DATABASE_URL")
+
+# engine = create_async_engine(
+#     DATABASE_URL,
+#     echo=False,
+# )
 ```
-После этого выполните:
+В файле cache.py поменять код на:
 ```
-pytest
+from redis import asyncio as aioredis
+from config import REDIS_HOST, REDIS_PORT
+
+
+redis = aioredis.from_url(
+    f"redis://{REDIS_HOST}:{REDIS_PORT}",
+    decode_responses=True
+)
+```
+В корень добавить файл .env с кодом:
+```
+DB_USER=postgres
+DB_PASS=postgres
+DB_HOST=postgres
+DB_PORT=5432
+DB_NAME=links_db
+
+REDIS_HOST=redis
+REDIS_PORT=6379
+
+SECRET=super_secret_key
+
+BASE_URL=http://localhost:8000
+
+CLEANUP_AFTER_DAYS=30
 ```
 
-Pytest автоматически обнаружит тесты в папке `tests` и выполнит проверку всех основных функций API. Тест написан с использованием codex.
+---
 
+# Деплой проекта
+
+Проект задеплоен на платформе **Render** с использованием репозитория GitHub.
+
+При каждом обновлении кода в ветке `main` происходит автоматический деплой новой версии сервиса.
+
+Сервис доступен по адресу:
+```
+https://hse-applied-python-lwqr.onrender.com
+```
+
+Swagger-документация API:
+```
+https://hse-applied-python-lwqr.onrender.com/docs
+```
+Пример проверки редиректа по короткой ссылке:
+```
+https://hse-applied-python-lwqr.onrender.com/links/{short_code}
+```
+Например:
+```
+https://hse-applied-python-lwqr.onrender.com/links/n37pYv
+```
+Деплой выполняется с использованием следующих сервисов Render:
+
+- **Web Service** — FastAPI приложение
+- **PostgreSQL** — основная база данных
+- **Redis (Key Value)** — кэширование
 # Используемые технологии
 
 - FastAPI
