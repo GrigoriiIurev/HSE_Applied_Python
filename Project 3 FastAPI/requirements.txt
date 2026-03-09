@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+sqlalchemy
+asyncpg
+redis
+fastapi-cache2
+fastapi-users[sqlalchemy]
+passlib[bcrypt]
+python-jose
+python-dotenv
+aiosqlite
