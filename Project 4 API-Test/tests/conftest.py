@@ -15,6 +15,7 @@ sys.path.append(str(SRC_PATH))
 from main import app
 from auth.db import Base
 from database import get_async_session
+import models
 
 from types import SimpleNamespace
 
@@ -38,7 +39,7 @@ from uuid import uuid4
 async def fake_get_current_user():
     return SimpleNamespace(id=uuid4())
 
-TEST_DB_URL = "sqlite+aiosqlite:///:memory:"
+TEST_DB_URL = "sqlite+aiosqlite:///./test.db"
 
 
 @pytest.fixture(scope="session")
@@ -82,6 +83,7 @@ try:
     cache.redis = fake_redis
     links_router.redis = fake_redis
     tasks_module.redis = fake_redis
+    FastAPICache.reset()
     FastAPICache.init(fake_redis, prefix="test-cache")
 except Exception:
     pass

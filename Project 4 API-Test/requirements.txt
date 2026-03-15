@@ -9,10 +9,3 @@ passlib[bcrypt]
 python-jose
 python-dotenv
 aiosqlite
-pytest
-pytest-asyncio
-pytest-mock
-httpx
-fakeredis
-coverage
-locust
